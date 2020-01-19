@@ -16,18 +16,23 @@ const typeDefs = gql`
   }
 
   type Query {
-    books: [Book!]
+    books: [Book!]!
+    users: [User!]!
   }
 `
 
 const resolvers = {
   Query: {
-    books: () => db.books
+    books: () => db.books,
+    users: () => db.users
   },
   Book: {
     author: (_, params, ctx, info) => {
       return db.users.find(user => user.id === _.author)
     }
+  },
+  User: {
+    books: _ => db.books.filter(book => book.author === _.id)
   }
 }
 
