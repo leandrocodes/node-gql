@@ -1,30 +1,24 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer } = require('apollo-server')
+
 const db = require('./db')
-
-const typeDefs = gql`
-  type Book {
-    id: ID!
-    author: User!
-    title: String
-  }
-
-  type User {
-    id: ID!
-    username: String!
-    name: String
-    books: [Book!]
-  }
-
-  type Query {
-    books: [Book!]!
-    users: [User!]!
-  }
-`
+const { typeDefs } = require('./typeDefs')
 
 const resolvers = {
   Query: {
     books: () => db.books,
     users: () => db.users
+  },
+  Mutation: {
+    addUser: (_, {username, name}) => {
+      const id = Math.floor(Math.random()*1000).toString()
+      const user = {
+        id,
+        username,
+        name
+      }
+      db.users.push(user)
+      return user
+    }
   },
   Book: {
     author: (_, params, ctx, info) => {
